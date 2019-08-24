@@ -1,0 +1,15 @@
+{
+  "name": "flights",
+  "version": "1.0.0",
+  "description": "",
+  "main": "Main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "dateformat": "^3.0.3",
+    "puppeteer": "^1.19.0"
+  }
+}

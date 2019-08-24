@@ -1,0 +1,1 @@
+ ("[" + (Get-Content .\flights.json) + "{} ]" | ConvertFrom-Json) | %{$G = ($_.airports | Select-String "(...).*(...)").Matches.Groups; Add-Member -InputObject $_ "sourceAirport" $G[1].Value; Add-Member -InputObject $_ "destAirport" $G[2].Value; $_} | ConvertTo-Csv -NoTypeInformation | Set-Content .\flights.csv
