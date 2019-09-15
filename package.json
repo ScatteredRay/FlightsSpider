@@ -1,15 +1,17 @@
 {
-  "name": "flights",
-  "version": "1.0.0",
-  "description": "",
-  "main": "Main.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "MIT",
-  "dependencies": {
-    "dateformat": "^3.0.3",
-    "puppeteer": "^1.19.0"
-  }
+    "name": "flights",
+    "version": "1.0.0",
+    "description": "",
+    "main": "Main.js",
+    "scripts": {
+        "start": "node main.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "MIT",
+    "dependencies": {
+        "dateformat": "^3.0.3",
+        "googleapis": "^43.0.0",
+        "puppeteer": "^1.19.0"
+    }
 }

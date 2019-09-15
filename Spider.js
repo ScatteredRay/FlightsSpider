@@ -1,7 +1,3 @@
-//https://www.google.com/flights#flt=aSFO.aFCO.2019-08-21*FCO.aSFO.2019-08-28;c:USD;e:1;sd:1;t:f
-
-//https://www.google.com/flights#flt=aSFO.aLAX.2019-12-10*LAX.aSFO.2019-12-20;c:USD;e:1;sd:1;t:f
-
 const puppeteer = require('puppeteer');
 const dateFormat = require('dateformat');
 const fs = require('fs');
@@ -9,7 +5,6 @@ const fs = require('fs');
 function ExtractFlights() {
 
     function extractInnerText(elems) {
-        console.log(elems);
         if(elems.length === 0) return null;
         let elem = elems[0];
         return elem.innerText.trim();
@@ -34,7 +29,6 @@ function ExtractFlights() {
         flInfo["airports"] = extractInnerText(f.getElementsByClassName("gws-flights-results__airports"));
         flInfo["stops"] = extractInnerText(f.getElementsByClassName("gws-flights-results__stops"));
         flights.push(flInfo);
-        console.dir(flInfo);
     }
     return flights;
 }
@@ -51,7 +45,7 @@ function FlightURL(sourceAirport, destAirport, departureDate, returnDate) {
 }
 
 
-(async () => {
+async function spiderFlights(SourceAirportCode, DestAirportCodes, cb) {
     const browser = await puppeteer.launch({
         headless: false,
         args: []
@@ -66,29 +60,23 @@ function FlightURL(sourceAirport, destAirport, departureDate, returnDate) {
     const ret = new Date(dep);
     ret.setDate(ret.getDate() + 7);
 
-    let DestAirports = ["LAX", "SEA", "BZE", "FCO", "CHC", "AKL", "ZQN", "JFK", "LHR", "LGW", "BCN"];
+    let DestAirports = DestAirportCodes;
 
     for(dest of DestAirports) {
         const page = await browser.newPage();
 
-        const url = FlightURL("SFO", dest, dep, ret);
-        console.log(url);
+        const url = FlightURL(SourceAirportCode, dest, dep, ret);
 
-        await page.goto(url, {'waitUntil': 'networkidle0'});//"https://www.google.com/flights#flt=aSFO.aLAX.2019-12-10*LAX.aSFO.2019-12-20;c:USD;e:1;sd:1;t:f");
+        await page.goto(url, {'waitUntil': 'networkidle0'});
 
         let flights = await page.evaluate(ExtractFlights);
-        //console.dir(flights);
 
-        let flightTxt = ""
-        for(g of flights) {
-            flightTxt += JSON.stringify(g) + ",\n";
-        }
-        console.log(flightTxt);
-
-        await fs.appendFileSync('flights.json', flightTxt, 'utf8');
+        await cb(SourceAirportCode, dest, flights);
 
         await page.waitFor(10 * 1000);
         await page.close();
     }
     await browser.close();
-})();
+}
+
+exports.spiderFlights = spiderFlights;
